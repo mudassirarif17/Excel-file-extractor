@@ -46,7 +46,8 @@ const App = () => {
   // Handle search
   const filteredItems = currentItems.filter((item) => {
     return Object.values(item).some((value) =>
-      value.toLowerCase().includes(searchTerm.toLowerCase())
+      // value.toLowerCase().includes(searchTerm.toLowerCase())
+      value?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 

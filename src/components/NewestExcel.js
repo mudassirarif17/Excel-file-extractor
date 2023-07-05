@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-// import XLSX from 'xlsx';
-import * as XLSX from 'xlsx/xlsx.mjs';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as XLSX from 'xlsx/xlsx.mjs';
+import { read, writeFileXLSX } from "xlsx";
 
 const App = () => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -28,7 +27,9 @@ const App = () => {
           rowData[column] = row[index];
         });
 
-        return rowData;
+        return { ...rowData , Editing: false };
+        // return { ...rowData, Percentage: '', Editor: '', Editing: false };
+        // return { ...rowData, Percentage: false, Editor: false, Editing: false };
       });
 
       setData(formattedData);
@@ -42,22 +43,17 @@ const App = () => {
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   const filteredItems = currentItems.filter((item) => {
-    return Object.values(item).some((value) => {
-      if (typeof value === 'string') {
-        return value.toLowerCase().includes(searchTerm?.toLowerCase()) || '';
-      }
-      return false;
-    });
+    return Object.values(item).some((value) =>
+      value.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
- 
-  // console.log(filteredItems)
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleEdit = (index) => {
     setData((prevData) => {
       const updatedData = [...prevData];
-      updatedData[index].editing = true;
+      updatedData[index].Editing = true;
       return updatedData;
     });
   };
@@ -65,7 +61,7 @@ const App = () => {
   const handleSave = (index) => {
     setData((prevData) => {
       const updatedData = [...prevData];
-      updatedData[index].editing = false;
+      updatedData[index].Editing = false;
       return updatedData;
     });
   };
@@ -84,8 +80,10 @@ const App = () => {
       return {
         ...item,
         // Percentage: '',
+        Percentage: item['Percentage'],
+        Editor: item['Editor'],
         // Editor: '',
-        // Editing: false,
+        Editing: false,
       };
     });
 
@@ -117,23 +115,20 @@ const App = () => {
             <th>Faculty</th>
             <th>Project Category</th>
             <th>Remarks</th>
-            <th>Progress</th>
+            <th>Percentage</th>
             <th>Editor</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredItems.map((item, index) => (
             <tr key={index}>
               <td>{item['Project Title']}</td>
-              <td>{
-
-                item['Project Description']}</td>
+              <td>{item['Project Description']}</td>
               <td>{item['Technology Used']}</td>
               <td>{item['Faculty']}</td>
               <td>{item['Project Category']}</td>
               <td>
-                {item.editing ? (
+                {item.Editing ? (
                   <input
                     type="text"
                     name="Remarks"
@@ -146,20 +141,20 @@ const App = () => {
                 )}
               </td>
               <td>
-                {item.editing ? (
+                {item.Editing ? (
                   <input
                     type="text"
-                    name="Progress"
-                    value={item['Progress']}
+                    name="Percentage"
+                    value={item['Percentage']}
                     onChange={(e) => handleInputChange(e, index)}
                     className="form-control"
                   />
                 ) : (
-                  item['Progress']
+                  item['Percentage']
                 )}
               </td>
               <td>
-                {item.editing ? (
+                {item.Editing ? (
                   <input
                     type="text"
                     name="Editor"
@@ -171,8 +166,10 @@ const App = () => {
                   item['Editor']
                 )}
               </td>
+              {/* <td>{item['Percentage']}</td> */}
+              {/* <td>{item['Editor']}</td> */}
               <td>
-                {item.editing ? (
+                {item.Editing ? (
                   <button className="btn btn-primary" onClick={() => handleSave(index)}>
                     Save
                   </button>
@@ -187,7 +184,7 @@ const App = () => {
         </tbody>
       </table>
 
-      <div className="text-center mb-2">
+      <div className="text-center">
         <button className="btn btn-success" onClick={convertToExcel}>
           Convert to Excel
         </button>

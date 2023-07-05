@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// import XLSX from 'xlsx';
-import * as XLSX from 'xlsx/xlsx.mjs';
+import * as XLSX from 'xlsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -42,15 +41,10 @@ const App = () => {
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   const filteredItems = currentItems.filter((item) => {
-    return Object.values(item).some((value) => {
-      if (typeof value === 'string') {
-        return value.toLowerCase().includes(searchTerm?.toLowerCase()) || '';
-      }
-      return false;
-    });
+    return Object.values(item).some((value) =>
+      value?.toLowerCase().includes(searchTerm?.toLowerCase()) || ''
+    );
   });
- 
-  // console.log(filteredItems)
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -83,9 +77,6 @@ const App = () => {
     const updatedData = data.map((item) => {
       return {
         ...item,
-        // Percentage: '',
-        // Editor: '',
-        // Editing: false,
       };
     });
 
@@ -126,9 +117,7 @@ const App = () => {
           {filteredItems.map((item, index) => (
             <tr key={index}>
               <td>{item['Project Title']}</td>
-              <td>{
-
-                item['Project Description']}</td>
+              <td>{item['Project Description']}</td>
               <td>{item['Technology Used']}</td>
               <td>{item['Faculty']}</td>
               <td>{item['Project Category']}</td>
