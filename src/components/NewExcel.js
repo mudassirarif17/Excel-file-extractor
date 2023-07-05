@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const App = () => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(500);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleFileUpload = (e) => {
@@ -96,22 +96,49 @@ const App = () => {
   };
 
   return (
+    <>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Excel Data Viewer</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      {/* <form class="d-flex w-full"> */}
+        {/* <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/> */}
+        <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="form-control "
+      />
+      <div className="text-center mx-2">
+        <button className="btn btn-sm btn-success" onClick={convertToExcel}>
+          Convert to Excel
+        </button>
+      </div>
+      {/* </form> */}
+    </div>
+  </div>
+</nav>
     <div className="container mt-5">
       <h1 className="text-center mb-4">Excel Data Viewer</h1>
       <input type="file" onChange={handleFileUpload} accept=".xlsx, .xls" className="mb-3" />
 
-      <input
+      {/* <input
         type="text"
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="form-control mb-3"
-      />
+      /> */}
 
       <table className="table table-striped">
         <thead>
           <tr>
             <th>Project Title</th>
+            <th>Batch</th>
             <th>Project Description</th>
             <th>Technology Used</th>
             <th>Faculty</th>
@@ -126,6 +153,7 @@ const App = () => {
           {filteredItems.map((item, index) => (
             <tr key={index}>
               <td>{item['Project Title']}</td>
+              <td>{item['Batch']}</td>
               <td>{
 
                 item['Project Description']}</td>
@@ -187,11 +215,11 @@ const App = () => {
         </tbody>
       </table>
 
-      <div className="text-center mb-2">
+      {/* <div className="text-center mb-2">
         <button className="btn btn-success" onClick={convertToExcel}>
           Convert to Excel
         </button>
-      </div>
+      </div> */}
 
       <Pagination
         itemsPerPage={itemsPerPage}
@@ -200,6 +228,7 @@ const App = () => {
         paginate={paginate}
       />
     </div>
+    </>
   );
 };
 
@@ -215,9 +244,9 @@ const Pagination = ({ itemsPerPage, totalItems, currentPage, paginate }) => {
       <ul className="pagination justify-content-center">
         {pageNumbers.map((number) => (
           <li className={`page-item ${currentPage === number ? 'active' : ''}`} key={number}>
-            <button className="page-link" onClick={() => paginate(number)}>
+            {/* <button className="page-link" onClick={() => paginate(number)}>
               {number}
-            </button>
+            </button> */}
           </li>
         ))}
       </ul>
